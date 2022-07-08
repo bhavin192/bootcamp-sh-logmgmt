@@ -28,6 +28,24 @@ function rotate_logs() {
   info "The '${file}' has been renamed to '${new_file}'."
 }
 
+function clean_logs() {
+  num_files="$(ls -1 ./logs/ | wc -l)"
+  threshold="$1"
+  if [[ ${num_files} -le ${threshold} ]]; then
+    return 0
+  fi
+  files="$(ls -Acr ./logs/)"
+  for file in ${files}; do
+    info "Deleting the file './logs/${file}'."
+    rm "./logs/${file}"
+    num_files="$(ls -1 ./logs/ | wc -l)"
+    if [[ ${num_files} -le ${threshold} ]]; then
+      return 0
+    fi
+  done
+}
+
+
 if [[ $(id -u) -eq 0 ]]; then
   fatal "This script must be run as a non-root user."
 fi
@@ -46,4 +64,8 @@ fi
 
 if [[ "$1" == "rotate" ]]; then
   rotate_logs "earth-log" 20
+fi
+
+if [[ "$1" == "clean" ]]; then
+  clean_logs 5
 fi
