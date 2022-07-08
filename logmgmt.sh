@@ -9,6 +9,12 @@ function fatal() {
   exit 1
 }
 
+function gen_logs() {
+  for (( n = 0; n < $2; n++ )); do
+    echo "The quick brown fox jumps over the lazy dog." >> "./logs/$1"
+  done
+}
+
 if [[ $(id -u) -eq 0 ]]; then
   fatal "This script must be run as a non-root user."
 fi
@@ -19,4 +25,8 @@ fi
 
 if [[ $# -lt 1 ]]; then
   fatal "Needs at least one argument, can be gen, rotate, or clean."
+fi
+
+if [[ "$1" == "gen" ]]; then
+  gen_logs "earth-log" 50
 fi
